@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import {
   MatDialog,
@@ -7,6 +7,7 @@ import {
   MatDialogContent,
 } from '@angular/material/dialog'
 import { AddmarkComponent } from '../addmark/addmark.component';
+import { ServiceService } from '../services/service.service';
 
 export interface PeriodicElement {
   course: string;
@@ -29,11 +30,23 @@ const ELEMENT_DATA: PeriodicElement[] = [
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   displayedColumns: string[] = ['position', 'course', 'time', 'obtainedMark','maxMark'];
   dataSource = ELEMENT_DATA;
 
-  constructor(public dialog: MatDialog){}
+  constructor(public dialog: MatDialog,private api:ServiceService){}
+
+
+  ngOnInit(): void {
+    this.api.getStudent().subscribe({
+      next:(res:any)=>{
+        console.log(res)
+      },
+      error:(err:any)=>{
+        console.log(err)
+      }
+    })
+  }
 
 
   openAddMarkDialog() {
