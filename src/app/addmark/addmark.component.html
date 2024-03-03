@@ -1,23 +1,41 @@
 <form [formGroup]="marksForm" (ngSubmit)="onSubmit()">
+  <section>
     <mat-form-field>
-      <input matInput formControlName="courseName" placeholder="Course Name">
+      <input matInput formControlName="courseName" placeholder="Course Name" />
     </mat-form-field>
-  
+
     <mat-form-field>
-      <input matInput [matDatepicker]="picker" formControlName="examinationDateTime" placeholder="Examination Date">
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [min]="minDate"
+        [max]="maxDate"
+        formControlName="examinationDate"
+        placeholder="Examination Date"
+      />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-  
-    <mat-form-field>
-      <input matInput formControlName="marksObtained" placeholder="Marks Obtained">
+
+    <mat-form-field class="example-full-width">
+      <input matInput type="time" formControlName="examinationTime" />
     </mat-form-field>
-  
+
     <mat-form-field>
-      <input matInput formControlName="maxMarks" placeholder="Maximum Marks">
+      <input
+        matInput
+        formControlName="marksObtained"
+        placeholder="Marks Obtained"
+      />
     </mat-form-field>
-  
+
+    <mat-form-field>
+      <input matInput formControlName="maxMarks" placeholder="Maximum Marks" />
+    </mat-form-field>
+  </section>
+
+  <div>
     <button mat-button type="button" (click)="onCancel()">Cancel</button>
     <button mat-raised-button color="primary" type="submit">Save</button>
-  </form>
-  
+  </div>
+</form>

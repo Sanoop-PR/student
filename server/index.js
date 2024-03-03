@@ -1,30 +1,27 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const marksRoutes = require('./router/markRoute');
+require('dotenv').config()
+const express = require('express')
+const cors = require('cors')
+require('./config/db')
+const router = require('./routes/route')
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+//create express app
+const app = express()
 
-app.use(bodyParser.json());
+// use package to app
+app.use(cors())
+app.use(express.json())
+app.use(router)
 
-// Connect to MongoDB database
-mongoose.connect('mongodb+srv://sanooppr:sanooppr60@cluster0.y2jlf4t.mongodb.net/student-mark?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch(error => {
-  console.error('Error connecting to MongoDB:', error);
-});
+// create port where app should listen
+const PORT = process.env.PORT || 3000
 
-// Use marks routes
-app.use('/marks', marksRoutes);
+// run app 
+app.listen(PORT,()=>{
+    console.log(`app started at port:${PORT}`)
+})
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+// resolve get req to localhost:3000
 app.get('/',(req,res)=>{
-    res.send("bank server started!!!")
+    res.status(200).json("server  started!!!")
 })

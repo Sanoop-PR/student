@@ -1,55 +1,77 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ServiceService } from '../services/service.service';
+import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
 
-// import {MatInputModule} from '@angular/material/input';
-// import {MatFormFieldModule} from '@angular/material/form-field';
-// import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-addmark',
   templateUrl: './addmark.component.html',
   styleUrls: ['./addmark.component.css'],
-  // imports: [FormsModule, MatFormFieldModule, MatInputModule],
-
 })
-export class AddmarkComponent implements OnInit {
+export class AddmarkComponent {
 
-  marksForm!: FormGroup;
+  minDate: Date;
+  maxDate: Date;
+
+  marksForm = this.formBuilder.group({
+    courseName: ['', Validators.required],
+      examinationDate: ['', Validators.required],
+      examinationTime: ['', Validators.required],
+      marksObtained: ['',[Validators.required, Validators.min(0)]],
+      maxMarks: ['', [Validators.required, Validators.min(0)]]
+  });
 
   constructor(
     private dialogRef: MatDialogRef<AddmarkComponent>,
     private formBuilder: FormBuilder,
-    private api: ServiceService
-  ) { }
-
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    private api: ServiceService,
+    private toastr: ToastrService
+  ) { 
+    const currentYear = new Date().getFullYear();
+    this.minDate = new Date(currentYear - 1, 0, 1);
+    this.maxDate = new Date();
   }
 
-  initForm() {
-    this.marksForm = this.formBuilder.group({
-      courseName: ['', Validators.required],
-      examinationDateTime: ['', Validators.required],
-      marksObtained: ['', [Validators.required, Validators.min(0)]],
-      maxMarks: ['', [Validators.required, Validators.min(0)]]
-    });
-  }
   
   onSubmit() {
     if (this.marksForm.valid) {
       console.log(this.marksForm);
+
+      let courseName = this.marksForm.value.courseName
+      let examinationDate = moment(this.marksForm.value.examinationDate).format('MMM D, YYYY');
+      let examinationTime = this.marksForm.value.examinationTime
+      let marksObtained = this.marksForm.value.marksObtained
+      let maxMarks = this.marksForm.value.maxMarks
       
-      // Save marks and close dialog
-      // this.api.addMarks(this.marksForm.value).subscribe(() => {
-      //   this.dialogRef.close(true); 
-      // });
+
+
+      this.api.addMarks(courseName,examinationDate,examinationTime,marksObtained,maxMarks).subscribe({
+        next:(res:any)=>{
+          console.log(res)
+          this.onCancel()
+          this.showSuccess()
+         
+        },
+        error:(err:any)=>{
+          console.log(err)
+          this.showError()
+        }
+      })
     }
   }
 
   onCancel() {
     this.dialogRef.close(false); // Pass false to indicate cancellation
+  }
+
+  showSuccess() {
+    this.toastr.success('new mark added');
+  }
+  showError() {
+    this.toastr.error('something wrong');
   }
 
 }

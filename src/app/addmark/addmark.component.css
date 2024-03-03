@@ -1,0 +1,13 @@
+section{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+form{
+    padding: 1rem;
+}
